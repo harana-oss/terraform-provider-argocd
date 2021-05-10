@@ -48,6 +48,15 @@ func resourceArgoCDApplicationCreate(ctx context.Context, d *schema.ResourceData
 		return diags
 	}
 	server := meta.(ServerInterface)
+	if err := server.initClients(); err != nil {
+		return []diag.Diagnostic{
+			diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("Failed to init clients"),
+				Detail:   err.Error(),
+			},
+		}
+	}
 	c := *server.ApplicationClient
 	app, err := c.Get(ctx, &applicationClient.ApplicationQuery{
 		Name: &objectMeta.Name,
@@ -149,6 +158,15 @@ func resourceArgoCDApplicationCreate(ctx context.Context, d *schema.ResourceData
 
 func resourceArgoCDApplicationRead(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	server := meta.(ServerInterface)
+	if err := server.initClients(); err != nil {
+		return []diag.Diagnostic{
+			diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("Failed to init clients"),
+				Detail:   err.Error(),
+			},
+		}
+	}
 	c := *server.ApplicationClient
 	appName := d.Id()
 	app, err := c.Get(ctx, &applicationClient.ApplicationQuery{
@@ -188,6 +206,15 @@ func resourceArgoCDApplicationUpdate(ctx context.Context, d *schema.ResourceData
 			return diags
 		}
 		server := meta.(ServerInterface)
+		if err := server.initClients(); err != nil {
+			return []diag.Diagnostic{
+				diag.Diagnostic{
+					Severity: diag.Error,
+					Summary:  fmt.Sprintf("Failed to init clients"),
+					Detail:   err.Error(),
+				},
+			}
+		}
 		c := *server.ApplicationClient
 		appRequest, err := c.Get(ctx, &applicationClient.ApplicationQuery{
 			Name:     &appName,
@@ -269,6 +296,15 @@ func resourceArgoCDApplicationUpdate(ctx context.Context, d *schema.ResourceData
 
 func resourceArgoCDApplicationDelete(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	server := meta.(ServerInterface)
+	if err := server.initClients(); err != nil {
+		return []diag.Diagnostic{
+			diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  fmt.Sprintf("Failed to init clients"),
+				Detail:   err.Error(),
+			},
+		}
+	}
 	c := *server.ApplicationClient
 	appName := d.Id()
 	_, err := c.Delete(ctx, &applicationClient.ApplicationDeleteRequest{
